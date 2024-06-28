@@ -3,7 +3,8 @@ import time
 from multiprocessing import Process, Condition
 
 import setproctitle
-import webview
+
+from ecgviewer.client import run_client
 from ecgviewer.domino import terminate_when_process_dies
 
 from ecgviewer.server import start_dash
@@ -31,14 +32,11 @@ def start():
     #  idk if that is possible.
     time.sleep(0.2)
 
-    # Create the webview.
-    webview.create_window('ECG Viewer', f'http://{host}:{port}')
-    webview.start()
+    run_client(host, port)
 
-    # Unreachable.
-    print("Web view stopped? Killing backend.")
+    # Reached when window is closed.
     p.terminate()
-    exit(1)
+    exit(0)
 
 
 if __name__ == '__main__':

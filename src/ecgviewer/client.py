@@ -6,7 +6,7 @@ def run_client(host, port):
     window = webview.create_window(
         'ECG Viewer',
         f'http://{host}:{port}',
-        width=1200,
+        width=1100,
         height=800,
     )
 

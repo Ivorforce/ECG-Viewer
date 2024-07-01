@@ -7,7 +7,7 @@ def run_client(host, port):
         'ECG Viewer',
         f'http://{host}:{port}',
         width=1200,
-        height=600,
+        height=800,
     )
 
     # noinspection PyTypeChecker

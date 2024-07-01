@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ecg-viewer"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Lukas Tenbrink <lukas.tenbrink@gmail.com>"]
 readme = "README.md"

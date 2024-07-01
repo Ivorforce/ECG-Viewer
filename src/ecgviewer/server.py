@@ -15,6 +15,7 @@ from flask_caching import Cache
 
 from ecgviewer import visualization
 from ecgviewer.domino import terminate_when_parent_process_dies
+from ecgviewer.filter import filter
 from ecgviewer.visualization import add_ann_vlines
 
 
@@ -47,13 +48,28 @@ def start_dash(host: str, port: int, server_is_started: Condition):
         html.Div([
             html.Div([
                 dcc.Dropdown(
-                    id="leads-mode",
-                    style={'width': 200},
-                    options=["Separate Leads", "Stacked Leads"],
-                    value="Separate Leads",
+                    id="leads-filter",
+                    style={'width': 150},
+                    options=[
+                        {'label': 'No Filter', 'value': 0},
+                        {'label': '0.01hz HP', 'value': 0.01},
+                        {'label': '0.1hz HP', 'value': 0.1},
+                        {'label': '1hz HP', 'value': 1},
+                    ],
+                    value=0.01,
                     searchable=False,
                     clearable=False,
                 ),
+                html.Div([
+                    dcc.Dropdown(
+                        id="leads-mode",
+                        style={'width': 200},
+                        options=["Separate Leads", "Stacked Leads"],
+                        value="Separate Leads",
+                        searchable=False,
+                        clearable=False,
+                    ),
+                ], style={'padding-left': 20}),
                 html.Div([
                     dcc.Dropdown(id="leads", multi=True),
                 ], style={'flex': '1 1 auto', 'padding-left': 20}),
@@ -148,8 +164,9 @@ def start_dash(host: str, port: int, server_is_started: Condition):
         Input('position', 'value'),
         Input('leads', 'value'),
         Input('leads-mode', 'value'),
+        Input('leads-filter', 'value'),
     )
-    def update_graph(list_of_contents, list_of_names: List[str], annotations_file, position: int, leads: List[str], leads_mode: str):
+    def update_graph(list_of_contents, list_of_names: List[str], annotations_file, position: int, leads: List[str], leads_mode: str, leads_filter: float):
         record = read_record(list_of_contents, list_of_names)
         annotation = read_annotations(annotations_file)
 
@@ -159,7 +176,20 @@ def start_dash(host: str, port: int, server_is_started: Condition):
         sampfrom = max(0, int(position * record.fs - record.fs * 1.5))
         sampto = min(record.sig_len, int(position * record.fs + record.fs * 1.5))
 
-        data = record.p_signal[sampfrom:sampto, [record.sig_name.index(l) for l in leads]]
+        # Subselect channels
+        data = record.p_signal[:, [record.sig_name.index(l) for l in leads]]
+        if leads_filter != 0:
+            data = filter(
+                data, fs=record.fs, axis=0,
+                lower_bound_hz=leads_filter,
+                two_way=True,
+                fclass='butter',
+                order=2,
+            )
+
+        # Subselect range
+        data = data[sampfrom:sampto]
+
         # index = np.linspace(sampfrom / record.fs, sampto / record.fs, num=data.shape[0], endpoint=False)
         index = pd.timedelta_range(
             timedelta(seconds=sampfrom / record.fs),

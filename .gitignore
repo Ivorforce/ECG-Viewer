@@ -1,5 +1,1 @@
-*.bin
-*.dist
-*.build
-*.app
-info.plist
+build

@@ -47,20 +47,18 @@ def add_ann_vlines(fig: go.Figure, annotations: wfdb.Annotation, fs, sampfrom, s
 
     for i in np.arange(annotations.ann_len)[is_included]:
         cmap_idx = None
-        if annotations.symbol[i] in qrs_symbols:
-            cmap_idx = 1
-        elif annotations.symbol[i] in ["(", ")"]:
+        if annotations.symbol[i] in qrs_symbols or (annotations.symbol[i] in ["(", ")"] and annotations.subtype[i] == 1):
             cmap_idx = 0
-        elif annotations.symbol[i] == "p":
+        elif annotations.symbol[i] == "p" or (annotations.symbol[i] in ["(", ")"] and annotations.subtype[i] == 0):
+            cmap_idx = 1
+        elif annotations.symbol[i] == "t" or (annotations.symbol[i] in ["(", ")"] and annotations.subtype[i] == 2):
             cmap_idx = 2
-        elif annotations.symbol[i] == "t":
-            cmap_idx = 3
 
         fig.add_vline(
             # FIXME see https://github.com/plotly/plotly.py/issues/3065
             x=(timedelta(seconds=annotations.sample[i] / fs) + pd.Timestamp("1970/01/01")).timestamp() * 1000 - 1000 * 60 * 60,
             line_color=cmap[cmap_idx] if cmap_idx is not None else None,
-            # line_dash="dash",
+            line_dash="dash",
             opacity=0.5,
             annotation=go.layout.Annotation(
                 text=annotations.symbol[i],

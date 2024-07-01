@@ -11,6 +11,7 @@ A small app to view [MIT-BIH](https://github.com/wfdb/wfdb-spec/) waveform data 
 - If desired, in the menu bar, select **Load Annotations...**.
 - Interact with the GUI as follows: 
   - Adjust the window to make the ECG legible. If an appropriate height cannot be achieved, use the scroll wheel to look at the remaining leads.
+  - Select the filter to use for data display. The filters are all bidirectional, 2nd order butterworth filters.
   - Select whether to separate the leads vertically ("Separate Leads") or stack them on top of each other ("Stacked Leads").
   - Select the leads to show in the graph.
   - Select the appropriate time using the time slider.

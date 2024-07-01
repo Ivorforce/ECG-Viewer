@@ -7,6 +7,7 @@ env:
   PYTHON_VERSION: "3.9"
   POETRY_VERSION: "1.8.1"
   POETRY_URL: https://install.python-poetry.org
+  NUITKA_CACHE_DIR: ${{ github.action_path }}/nuitka/cache
 
 defaults:
   run:
@@ -46,6 +47,25 @@ jobs:
         run: poetry install --no-interaction --no-root
       - name: Install library
         run: poetry install --no-interaction
+
+      # Modified rom https://github.com/Nuitka/Nuitka-Action/blob/main/action.yml
+      #  We cannot use that github action in full because it assumes a lot that isn't true (e.g. PYTHON_VERSION not set,
+      #  requirements.txt used, etc.).
+      - name: Install ccache
+        # TODO: Proper "in" test could make sense here.
+        if: ${{ runner.os == 'Linux' }}
+        shell: bash
+        run: |
+          sudo apt-get install -y ccache
+      - name: Cache Nuitka cache directory
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NUITKA_CACHE_DIR }}
+          key: ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-nuitka-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-python-${{ env.PYTHON_VERSION }}-
+            ${{ runner.os }}-python-
+            ${{ runner.os }}-
 
       - name: Build Executable
         run: |

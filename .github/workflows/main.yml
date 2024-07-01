@@ -17,7 +17,9 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        # Do not use the latest versions in order to be backward compatible.
+        # In particular, macos 14+ will build for arm only.
+        os: [macos-12, ubuntu-20.04, windows-2019]
 
     runs-on: ${{ matrix.os }}
 

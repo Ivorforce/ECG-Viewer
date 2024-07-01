@@ -134,6 +134,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
         Output('position', 'max'),
         Output('leads', 'options'),
         Output('leads', 'value'),
+        Output('position', 'value'),
         Input('upload-data', 'contents'),
         State('upload-data', 'filename'),
     )
@@ -144,7 +145,8 @@ def start_dash(host: str, port: int, server_is_started: Condition):
                 {i: f"{i}" for i in range(11)},
                 10,
                 [],
-                []
+                [],
+                0,
             )
 
         marks = np.linspace(0, record.sig_len // record.fs, num=10)
@@ -154,6 +156,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
             record.sig_len // record.fs,
             list(record.sig_name),
             list(record.sig_name),
+            1,  # Start not at the very start but slightly right, because it looks better.
         )
 
     @callback(

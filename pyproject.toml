@@ -12,10 +12,10 @@ packages = [
 python = "~3.9"
 dash = "^2.17.1"
 pandas = "^2.2.2"
-nuitka = "^2.3.9"
+nuitka = { git = "https://github.com/Nuitka/Nuitka.git", rev = "40529e75be5299f7262946b57eb095a502447ee7 "}
 pywebview = "^5.1"
 setproctitle = "^1.3.3"
-wfdb = "^4.1.2"
+wfdb = { git = "https://github.com/Ivorforce/wfdb-python.git", branch = "read-stream" }
 flask-caching = "^2.3.0"
 
 

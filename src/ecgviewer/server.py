@@ -61,7 +61,11 @@ def start_dash(host: str, port: int, server_is_started: Condition):
             html.Div([
                 dcc.Graph(
                     id='graph-content',
-                    # config={'displayModeBar': False},
+                    config={
+                        'modeBarButtonsToRemove': ['autoScale'],
+                        'displaylogo': False,
+                        # 'displayModeBar': False,
+                    },
                 ),
             ], style={'flex': '1 1 auto', "overflow-y": "scroll"}),
             dcc.Slider(
@@ -150,7 +154,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
         annotation = read_annotations(annotations_file)
 
         if record is None or leads is None:
-            return go.Figure()
+            return {}
 
         sampfrom = max(0, int(position * record.fs - record.fs * 1.5))
         sampto = min(record.sig_len, int(position * record.fs + record.fs * 1.5))
@@ -181,6 +185,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
             ],
             layout=go.Layout(
                 yaxis=go.layout.YAxis(
+                    autorange=False,
                     range=[min_shown_data, max_shown_data],
                     # TODO This just scrolls back and for some reason zooms the graph?
                     # minallowed=min_shown_data - 2,

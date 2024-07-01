@@ -45,22 +45,37 @@ def start_dash(host: str, port: int, server_is_started: Condition):
             multiple=False,
         ),
         html.Div([
-            html.Span(["Leads"], style={"padding-top": 8}),
             html.Div([
-                dcc.Dropdown(id="leads", multi=True),
-            ], style={'flex': '1 1 auto', 'padding-left': 20}),
-        ], style={'padding': '20px', 'display': 'flex', 'flex-wrap': 'nowrap'}),
-        dcc.Graph(
-            id='graph-content',
-            # config={'displayModeBar': False},
-        ),
-        dcc.Slider(
-            0, 5, 0.04 * 5,
-            id='position',
-            tooltip={"placement": "bottom", "always_visible": True, "transform": "secs_to_timestamp"},
-            value=0,
-            updatemode='mouseup',
-        ),
+                dcc.Dropdown(
+                    id="leads-mode",
+                    style={'width': 200},
+                    options=["Separate Leads", "Stacked Leads"],
+                    value="Separate Leads",
+                ),
+                html.Div([
+                    dcc.Dropdown(id="leads", multi=True),
+                ], style={'flex': '1 1 auto', 'padding-left': 20}),
+            ], style={'padding': '20px', 'display': 'flex', 'flex-wrap': 'nowrap'}),
+            html.Div([
+                dcc.Graph(
+                    id='graph-content',
+                    # config={'displayModeBar': False},
+                ),
+            ], style={'flex': '1 1 auto', "overflow-y": "scroll"}),
+            dcc.Slider(
+                0, 5, 0.04 * 5,
+                id='position',
+                tooltip={"placement": "bottom", "always_visible": True, "transform": "secs_to_timestamp"},
+                value=0,
+                updatemode='mouseup',
+            ),
+        ], style={
+            "height": "100vh",
+            "width": "100vw",
+            "display": "flex",
+            "overflow": "hidden",
+            "flex-direction": "column",
+        }),
     ]
 
     def decode_data(contents):
@@ -116,7 +131,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
             {i: f"{int(i // 60)}:{int(i % 60)}" for i in marks},
             record.sig_len // record.fs,
             list(record.sig_name),
-            [record.sig_name[0]],
+            list(record.sig_name),
         )
 
     @callback(
@@ -126,8 +141,9 @@ def start_dash(host: str, port: int, server_is_started: Condition):
         Input('upload-annotations', 'contents'),
         Input('position', 'value'),
         Input('leads', 'value'),
+        Input('leads-mode', 'value'),
     )
-    def update_graph(list_of_contents, list_of_names: List[str], annotations_file, position: int, leads: List[str]):
+    def update_graph(list_of_contents, list_of_names: List[str], annotations_file, position: int, leads: List[str], leads_mode: str):
         record = read_record(list_of_contents, list_of_names)
         annotation = read_annotations(annotations_file)
 
@@ -146,6 +162,16 @@ def start_dash(host: str, port: int, server_is_started: Condition):
             closed='right',
         ) + pd.Timestamp("1970/01/01")
 
+        is_separate_leads = leads_mode == "Separate Leads"
+        if is_separate_leads:
+            data = np.copy(data)
+            # Separate by 3 big boxes
+            for i in range(1, data.shape[1]):
+                data[:, i] -= i * 1.5
+
+        min_shown_data = (-data.shape[1] * 1.5) if is_separate_leads else -1.5
+        max_shown_data = 1.5
+
         fig = go.Figure(
             data=[
                 go.Scatter(y=data[:, i], x=index, mode='lines', name=record.sig_name[i])
@@ -154,22 +180,35 @@ def start_dash(host: str, port: int, server_is_started: Condition):
             layout=go.Layout(
                 dragmode='pan',
                 yaxis=go.layout.YAxis(
-                    range=[-1.5, 1.5],
+                    range=[min_shown_data, max_shown_data],
+                    # TODO This just scrolls back and for some reason zooms the graph?
+                    # minallowed=min_shown_data - 2,
+                    # maxallowed=max_shown_data + 2,
                     constraintoward='center',
                     # fixedrange=True,
-                    scaleanchor="x",
-                    scaleratio=0.4,
+                    # TODO This doesn't work when using datetime x indices
+                    # scaleanchor="x",
+                    # scaleratio=0.4,
                     automargin=False,
                 ),
                 xaxis=go.layout.XAxis(
                     # fixedrange=True,
+                    # Don't just use index here, because otherwise the edges are weirdly scaled
+                    range=[
+                        timedelta(seconds=(position * record.fs - record.fs * 1.5) / record.fs) + pd.Timestamp("1970/01/01"),
+                        timedelta(seconds=(position * record.fs + record.fs * 1.5) / record.fs) + pd.Timestamp("1970/01/01"),
+                    ],
                     # rangeslider=go.layout.xaxis.Rangeslider(
                     #     visible=True,
                     #     yaxis=go.layout.xaxis.rangeslider.YAxis(rangemode='fixed', range=[-1.5, 1.5]),
                     # ),
                     automargin=False,
+                    # FIXME This somehow breaks the graph
+                    # minallowed=index[0],
+                    # maxallowed=index[-1],
                 ),
-                margin=go.layout.Margin(l=20, r=20, t=20, b=20),
+                margin=go.layout.Margin(l=20, r=20, t=20, b=50),
+                height=(200 + data.shape[1] * 200) if is_separate_leads else (200 + 200),
             ),
         )
         visualization.add_grid(fig)

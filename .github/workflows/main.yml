@@ -8,6 +8,10 @@ env:
   POETRY_VERSION: "1.8.1"
   POETRY_URL: https://install.python-poetry.org
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     strategy:
@@ -21,50 +25,32 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-        id: setup_python
 
-      # Poetry cache depends on OS, Python version and Poetry version.
-      - name: Cache Poetry cache
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+
+      - name: Load cached venv
+        id: cached-pip-wheels
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pypoetry
-          key: poetry-cache-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ env.POETRY_VERSION }}
-      # virtualenv cache should depends on OS, Python version and `poetry.lock` (and optionally workflow files).
-      - name: Cache Packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.local
-          key: poetry-local-${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}-${{ hashFiles('.github/workflows/*.yml') }}
-      - name: Install Poetry ${{ env.POETRY_VERSION }}
-        run: |
-          curl -sSL ${{ env.POETRY_URL }} | python - --version ${{ env.POETRY_VERSION }}
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-      - name: Install Dependencies
-        run: poetry install
+          path: ~/.cache
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-root
+      - name: Install library
+        run: poetry install --no-interaction
 
       - name: Build Executable
-        uses: Nuitka/Nuitka-Action@main
-        with:
-          nuitka-version: main
-          script-name: src/ecgviewer/main.py
-          onefile: true
-          include-package-data: |
-            dash
-            dash_core_components
-            dash_html_components
-            packaging
-            plotly
-            ecgviewer
-          include-package: |
-            dash
-            dash_core_components
-            dash_html_components
-            packaging
-            plotly
-            ecgviewer
+        run: |
+          source $VENV
+          python -m nuitka --onefile --include-package=dash --include-package-data=dash --include-package=dash_core_components --include-package-data=dash_core_components --include-package=dash_html_components --include-package-data=dash_html_components --include-package=packaging --include-package-data=packaging --include-package=plotly --include-package-data=plotly --include-package=ecgviewer --include-package-data=ecgviewer src/ecgviewer/main.py
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3

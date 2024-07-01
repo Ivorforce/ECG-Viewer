@@ -248,7 +248,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
                 ),
                 margin=go.layout.Margin(l=20, r=20, t=20, b=50),
                 height=(200 + data.shape[1] * 200) if is_separate_leads else (200 + 200),
-                hovermode="x unified"
+                hovermode="x",  # x unified looks better, but puts the box in the middle, making it impossible to see elsewhere.
             ),
         )
         visualization.add_grid(fig)

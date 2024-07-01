@@ -33,17 +33,17 @@ def start_dash(host: str, port: int, server_is_started: Condition):
     })
 
     app.layout = [
-        dcc.Store(id='memory'),
-        dcc.Upload(
-            id='upload-data',
-            style={'display': 'none'},
-            multiple=True,
-        ),
-        dcc.Upload(
-            id='upload-annotations',
-            style={'display': 'none'},
-            multiple=False,
-        ),
+        html.Div([
+            dcc.Store(id='memory'),
+            dcc.Upload(
+                id='upload-data',
+                multiple=True,
+            ),
+            dcc.Upload(
+                id='upload-annotations',
+                multiple=False,
+            ),
+        ], style={'display': 'none'}),
         html.Div([
             html.Div([
                 dcc.Dropdown(

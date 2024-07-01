@@ -178,7 +178,6 @@ def start_dash(host: str, port: int, server_is_started: Condition):
                 for i in range(data.shape[1])
             ],
             layout=go.Layout(
-                dragmode='pan',
                 yaxis=go.layout.YAxis(
                     range=[min_shown_data, max_shown_data],
                     # TODO This just scrolls back and for some reason zooms the graph?
@@ -209,6 +208,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
                 ),
                 margin=go.layout.Margin(l=20, r=20, t=20, b=50),
                 height=(200 + data.shape[1] * 200) if is_separate_leads else (200 + 200),
+                hovermode="x unified"
             ),
         )
         visualization.add_grid(fig)

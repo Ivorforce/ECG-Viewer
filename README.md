@@ -7,8 +7,8 @@ A small app to view [MIT-BIH](https://github.com/wfdb/wfdb-spec/) waveform data 
 ## How to Use
 - Download the latest version of this application from the [Releases](https://github.com/Ivorforce/ECG-Viewer/releases) page.
 - Double click the executable.
-- In the context menu, select **Load Record...**. Select both the `.hea` and `.dat` file.
-- If desired, in the context menu, select **Load Annotations...**.
+- In the menu bar, select **Load Record...**. Select both the `.hea` and `.dat` file.
+- If desired, in the menu bar, select **Load Annotations...**.
 - Interact with the GUI as follows: 
   - Adjust the window to make the ECG legible. If an appropriate height cannot be achieved, use the scroll wheel to look at the remaining leads.
   - Select whether to separate the leads vertically ("Separate Leads") or stack them on top of each other ("Stacked Leads").

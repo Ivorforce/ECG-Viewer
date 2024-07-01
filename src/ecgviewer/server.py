@@ -51,6 +51,8 @@ def start_dash(host: str, port: int, server_is_started: Condition):
                     style={'width': 200},
                     options=["Separate Leads", "Stacked Leads"],
                     value="Separate Leads",
+                    searchable=False,
+                    clearable=False,
                 ),
                 html.Div([
                     dcc.Dropdown(id="leads", multi=True),

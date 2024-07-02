@@ -29,3 +29,7 @@ Please [report an issue](https://github.com/Ivorforce/ECG-Viewer/issues) if you 
 ## Known Issues
 - In separate leads mode, the values shown on hover for the leads are incorrect.
 - When a filter is used, the values shown on hover are for filtered values, not the original.
+
+## In the Wild
+
+See how I'm using this template with a more advanced project in [ECG Viewer](https://github.com/Ivorforce/ECG-Viewer/tree/main).

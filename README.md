@@ -30,6 +30,12 @@ Please [report an issue](https://github.com/Ivorforce/ECG-Viewer/issues) if you 
 - In separate leads mode, the values shown on hover for the leads are incorrect.
 - When a filter is used, the values shown on hover are for filtered values, not the original.
 
+## Alternatives
+
+There are a few alternatives to using Nuitka to create binaries:
+- Some (like [PyApp](https://ofek.dev/pyapp/latest/), [pyinstaller](https://pyinstaller.org/en/stable/) and [PyOxidizer](https://pyoxidizer.readthedocs.io/en/stable/)), bundle an automated setup script. Actual python code is run on target machines, which reduces build times and may avoid some issues while introducing others. It will also require the target machine to set up itself.
+- [Cython](https://cython.org) has an [embedding option](https://github.com/cython/cython/wiki/EmbeddingCython) that allows it to create executables. Cython can gain considerable speed over Nuitka, but may be more work to get running.
+
 ## In the Wild
 
 See how I'm using this template with a more advanced project in [ECG Viewer](https://github.com/Ivorforce/ECG-Viewer/tree/main).

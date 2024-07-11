@@ -188,6 +188,7 @@ def start_dash(host: str, port: int, server_is_started: Condition):
                 two_way=True,
                 fclass='butter',
                 order=2,
+                padtype='even',
             )
 
         # Subselect range

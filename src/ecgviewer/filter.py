@@ -1,3 +1,4 @@
+import functools
 from typing import Literal
 from scipy.signal import iirfilter, sosfilt, sosfiltfilt
 
@@ -7,18 +8,20 @@ fclasses = Literal['bessel', 'butter', 'ellip', 'cheby1', 'cheby2']
 
 
 def filter(
-        x: np.ndarray,
-        fs: float,
-        *,
-        lower_bound_hz: float = None,
-        upper_bound_hz: float = None,
-        band_stop: bool = False,
-        fclass: fclasses,
-        order: int,
-        two_way: bool,
-        max_ripple: float = None,
-        min_attenuation: float = None,
-        axis=-1
+    x: np.ndarray,
+    fs: float,
+    *,
+    lower_bound_hz: float = None,
+    upper_bound_hz: float = None,
+    band_stop: bool = False,
+    fclass: fclasses,
+    order: int,
+    two_way: bool,
+    max_ripple: float = None,
+    min_attenuation: float = None,
+    padtype='odd',
+    padlen=None,
+    axis=-1
 ):
     """
     Apply a highpass or lowpass filter to a signal.
@@ -39,6 +42,8 @@ def filter(
             in the passband. (dB)
         min_attenuation: For Chebyshev and elliptic filters, provides the minimum
             attenuation in the stop band. (dB)
+        padtype: See filtfilt docs. Does not apply to single-direction filters.
+        padlen: See filtfilt docs. Does not apply to single-direction filters.
         axis: axis of x to apply filter to
 
     Returns:
@@ -62,6 +67,6 @@ def filter(
         N=order, Wn=Wn, fs=fs,
         btype=btype, output="sos", ftype=fclass, rp=max_ripple, rs=min_attenuation
     ).astype(x.dtype)
-    filter_fn = sosfiltfilt if two_way else sosfilt
+    filter_fn = functools.partial(sosfiltfilt, padtype=padtype, padlen=padlen) if two_way else sosfilt
 
     return filter_fn(sos, x, axis=axis)

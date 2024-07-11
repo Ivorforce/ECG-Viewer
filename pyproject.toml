@@ -12,7 +12,7 @@ packages = [
 python = "~3.9"
 dash = "^2.17.1"
 pandas = "^2.2.2"
-nuitka = { git = "https://github.com/Nuitka/Nuitka.git", rev = "8ffad3f19c9b163d0cbf40a6438f13cf5101bda4"}
+nuitka = { git = "https://github.com/Nuitka/Nuitka.git", rev = "75e24f60bd7c6ab54b10cbf701621f76f229f40e"}
 pywebview = "^5.1"
 setproctitle = "^1.3.3"
 wfdb = { git = "https://github.com/Ivorforce/wfdb-python.git", branch = "read-stream" }

@@ -817,7 +817,7 @@ files = [
 
 [[package]]
 name = "Nuitka"
-version = "2.4rc8"
+version = "2.4rc9"
 description = "Python compiler with full language support and CPython compatibility"
 optional = false
 python-versions = "*"
@@ -831,8 +831,8 @@ zstandard = ">=0.15"
 [package.source]
 type = "git"
 url = "https://github.com/Nuitka/Nuitka.git"
-reference = "8ffad3f19c9b163d0cbf40a6438f13cf5101bda4 "
-resolved_reference = "8ffad3f19c9b163d0cbf40a6438f13cf5101bda4"
+reference = "75e24f60bd7c6ab54b10cbf701621f76f229f40e"
+resolved_reference = "75e24f60bd7c6ab54b10cbf701621f76f229f40e"
 
 [[package]]
 name = "numpy"
@@ -1684,4 +1684,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.9"
-content-hash = "93a8a66354cd4e53d3d29f555eb11002f69c331829074d8eb9199c756912d093"
+content-hash = "c2820c4259009c491588ac490b120965f193a3774ccbb1b97150cd47238f3d15"

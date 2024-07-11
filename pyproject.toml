@@ -12,13 +12,15 @@ packages = [
 python = "~3.9"
 dash = "^2.17.1"
 pandas = "^2.2.2"
-nuitka = { git = "https://github.com/Nuitka/Nuitka.git", rev = "75e24f60bd7c6ab54b10cbf701621f76f229f40e"}
+nuitka = { git = "https://github.com/Nuitka/Nuitka.git", rev = "75e24f60bd7c6ab54b10cbf701621f76f229f40e", optional=true }
 pywebview = "^5.1"
 setproctitle = "^1.3.3"
 wfdb = { git = "https://github.com/Ivorforce/wfdb-python.git", branch = "read-stream" }
 flask-caching = "^2.3.0"
 numpy = "^1.26"
 
+[tool.poetry.extras]
+nuitka = ["nuitka"]
 
 [build-system]
 requires = ["poetry-core"]

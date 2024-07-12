@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - "dylib-scan-gh-tests*"
+
+env:
+  PYTHON_VERSION: "3.9"
+  POETRY_VERSION: "1.8.1"
+  POETRY_URL: https://install.python-poetry.org
+  NUITKA_CACHE_DIR: ~/.nuitka/cache
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        # Do not use the latest versions in order to be backward compatible.
+        # In particular, macos 14+ will build for arm only.
+#        os: [macos-12, ubuntu-20.04, windows-2019]
+        os: [macos-12, ubuntu-20.04]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip' # caching pip dependencies
+
+      # Install using pip / poetry-core backend via PEP 517
+      - run: pip install .
+
+      - run: pip install "git+https://$@github.com/Nuitka/Nuitka.git/@91ad4a6255d97d09cee7734d5184f685fb7181cd#egg=nuitka"
+
+      # Run test script
+      - run: python src/ecgviewer/nuitka_tests.py

@@ -20,7 +20,8 @@ jobs:
         # Do not use the latest versions in order to be backward compatible.
         # In particular, macos 14+ will build for arm only.
 #        os: [macos-12, ubuntu-20.04, windows-2019]
-        os: [macos-12, ubuntu-20.04]
+        # TODO macOS does not work due to https://github.com/Nuitka/Nuitka/issues/2978
+        os: [ubuntu-20.04, windows-2019]
 
     runs-on: ${{ matrix.os }}
 
@@ -39,7 +40,7 @@ jobs:
 
       - uses: Nuitka/Nuitka-Action@main
         with:
-          nuitka-version: 75e24f60bd7c6ab54b10cbf701621f76f229f40e
+          nuitka-version: 540118c2508aab023f0690f47f66ad8f2abe145a
           script-name: src/ecgviewer/main.py
           onefile: true
           macos-create-app-bundle: true

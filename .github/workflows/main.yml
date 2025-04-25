@@ -16,9 +16,7 @@ jobs:
       matrix:
         # Do not use the latest versions in order to be backward compatible.
         # In particular, macos 14+ will build for arm only.
-#        os: [macos-12, ubuntu-20.04, windows-2019]
-        # TODO macOS does not work due to https://github.com/Nuitka/Nuitka/issues/2978
-        os: [ubuntu-20.04, windows-2019]
+        os: [macos-13, ubuntu-22.04, windows-2019]
 
     runs-on: ${{ matrix.os }}
 

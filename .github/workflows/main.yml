@@ -39,8 +39,7 @@ jobs:
         with:
           nuitka-version: 540118c2508aab023f0690f47f66ad8f2abe145a
           script-name: src/ecgviewer/main.py
-          onefile: true
-          macos-create-app-bundle: true
+          mode: app
           include-package-data: |
             ecgviewer
             dash

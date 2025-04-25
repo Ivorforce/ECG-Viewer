@@ -35,7 +35,7 @@ jobs:
 
       - uses: Nuitka/Nuitka-Action@main
         with:
-          nuitka-version: 540118c2508aab023f0690f47f66ad8f2abe145a
+          nuitka-version: 2.6.9
           script-name: src/ecgviewer/main.py
           mode: app
           include-package-data: |
